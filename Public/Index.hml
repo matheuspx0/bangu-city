@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#18251d">
+<meta name="color-scheme" content="dark light">
+<title>Bangu City – Praça Lealdina Muniz</title>
+<style>
+:root{--chip:rgba(255,255,255,.86);--chipText:#14301f;--ring:rgba(255,255,255,.5);--btn:#f5d330;--btnText:#14301f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--chip:rgba(18,28,22,.82);--chipText:#e8f3ea;--ring:rgba(255,255,255,.3)}}
+:root[data-theme="dark"]{color-scheme:dark;--chip:rgba(18,28,22,.82);--chipText:#e8f3ea;--ring:rgba(255,255,255,.3)}
+html,body{height:100%;width:100%;margin:0;background:#a9d8f2;overflow:hidden;touch-action:none;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;user-select:none;-webkit-user-select:none;-webkit-font-smoothing:antialiased}
+canvas{position:fixed;inset:0;display:block;z-index:0}
+.chip,#joy,.b{z-index:10}
+.b{cursor:pointer;-webkit-tap-highlight-color:transparent}
+#joy,.b{touch-action:none;pointer-events:auto}
+.chip{position:fixed;left:12px;top:calc(env(safe-area-inset-top,0px) + 10px);background:var(--chip);color:var(--chipText);padding:8px 14px;border-radius:999px;font-weight:600;font-size:14px}
+#hint{top:calc(env(safe-area-inset-top,0px) + 52px);font-weight:400;font-size:13px;transition:opacity 1s}
+#joy{position:fixed;left:22px;bottom:calc(env(safe-area-inset-bottom,0px) + 28px);width:128px;height:128px;border-radius:50%;background:var(--ring);border:2px solid var(--ring)}
+#knob{position:absolute;left:34px;top:34px;width:60px;height:60px;border-radius:50%;background:var(--chip)}
+.b{position:fixed;right:22px;width:78px;height:78px;border-radius:50%;border:0;background:var(--chip);color:var(--chipText);font-weight:700;font-size:14px;font-family:inherit}
+#jump{bottom:calc(env(safe-area-inset-bottom,0px) + 40px);background:var(--btn);color:var(--btnText)}
+#run{bottom:calc(env(safe-area-inset-bottom,0px) + 132px)}
+#run.on{background:var(--btn);color:var(--btnText)}
+.kick{right:22px;width:78px;height:78px;font-size:13px;background:rgba(255,255,255,.92);color:#14301f}
+#kick{bottom:calc(env(safe-area-inset-bottom,0px) + 224px)}
+#kickStrong{bottom:calc(env(safe-area-inset-bottom,0px) + 306px);background:#f5d330;color:#14301f}
+#ballMsg{top:calc(env(safe-area-inset-top,0px) + 94px);font-size:12px;opacity:0;transition:opacity .2s}
+#rotateHint{display:none;position:fixed;inset:0;z-index:20;background:rgba(10,20,15,.88);color:white;
+  align-items:center;justify-content:center;text-align:center;padding:28px;font-size:18px;font-weight:700}
+@media (orientation:portrait){
+  #rotateHint{display:flex}
+}
+@media (orientation:landscape){
+  #joy{left:24px;bottom:22px;width:118px;height:118px}
+  #knob{left:29px;top:29px}
+  .b{right:22px;width:70px;height:70px}
+  #jump{bottom:22px}
+  #run{bottom:104px}
+  #kick{bottom:186px}
+  #kickStrong{bottom:268px}
+}
+
+#mainMenu{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:linear-gradient(135deg,rgba(4,17,12,.94),rgba(11,39,25,.88)),radial-gradient(circle at 50% 30%,#2c6944,transparent 60%);color:#fff}
+.menuBrand{text-align:center;margin-bottom:30px;text-shadow:0 4px 18px #000}
+.brandName{font-size:clamp(38px,8vw,66px);font-weight:1000;letter-spacing:4px;line-height:1.05}
+.onlineTag{display:inline-flex;align-items:center;gap:8px;margin-top:9px;padding:6px 15px;border:1px solid rgba(255,255,255,.28);border-radius:30px;font-size:13px;font-weight:800;letter-spacing:4px;background:rgba(255,255,255,.1)}
+.onlineTag i{width:8px;height:8px;border-radius:50%;background:#49e887;box-shadow:0 0 12px #49e887}
+.menuPanel{width:min(360px,92vw);display:flex;flex-direction:column;gap:12px;padding:22px;border:1px solid rgba(255,255,255,.18);border-radius:22px;background:rgba(5,18,12,.76);box-shadow:0 18px 60px #0008;backdrop-filter:blur(12px)}
+.menuBtn{width:100%;padding:17px 18px;border:1px solid rgba(255,255,255,.22);border-radius:12px;background:rgba(255,255,255,.09);color:#fff;font-weight:900;letter-spacing:1.5px;font-size:15px}
+.menuBtn.primary{background:#f5d330;color:#18301f;border:0;box-shadow:0 5px 0 #a88d13}
+.menuBtn:active{transform:translateY(2px)}
+.menuSub{display:none;padding:12px 4px 2px;color:#eaf2ec;text-align:center;font-size:13px;line-height:1.5}
+.menuSub.show{display:block}
+.menuSub button{margin:6px 4px;padding:9px 12px;border-radius:9px;border:1px solid #ffffff55;background:#ffffff14;color:white;font-weight:700}
+.menuFooter{position:absolute;bottom:22px;font-size:10px;letter-spacing:2px;color:#d2e1d6}
+#goalFlash{position:fixed;inset:0;z-index:25;display:none;align-items:center;justify-content:center;flex-direction:column;background:radial-gradient(circle,rgba(245,211,48,.32),rgba(0,0,0,.55));color:#fff;text-align:center;pointer-events:none}
+#goalFlash.show{display:flex;animation:goalPop 1.8s ease both}
+.goalWord{font-size:clamp(58px,13vw,110px);font-weight:1000;font-style:italic;letter-spacing:3px;text-shadow:0 6px 0 #8c351b,0 12px 28px #000;animation:goalBounce .45s ease-in-out infinite alternate}
+.goalSub{font-weight:900;letter-spacing:7px;font-size:14px;margin-top:8px}
+@keyframes goalPop{0%{opacity:0}12%,75%{opacity:1}100%{opacity:0}}
+@keyframes goalBounce{from{transform:scale(.94) rotate(-2deg)}to{transform:scale(1.06) rotate(2deg)}}
+#scoreHud{display:none;position:fixed;right:12px;top:12px;z-index:12;padding:8px 14px;border-radius:12px;background:#10251dcc;color:#fff;font-weight:800;letter-spacing:1px}
+#scoreHud b{color:#f5d330;font-size:20px;margin-left:8px}
+
+#onlineCount{display:none;position:fixed;right:12px;top:56px;z-index:12;padding:6px 12px;border-radius:10px;background:#10251dcc;color:#9ef5be;font-weight:700;font-size:12px;letter-spacing:.5px}
+
+@media (orientation:portrait){#mainMenu{padding:18px}.menuBrand{margin-bottom:20px}.menuPanel{padding:16px}}
+</style></head><body>
+<div class="chip">Praça Lealdina Muniz, Bangu</div>
+<div class="chip" id="hint">Arraste a tela para girar a câmera</div>
+<div id="joy"><div id="knob"></div></div>
+<button class="b" id="run">Correr</button><button class="b" id="jump">Pular</button>
+<button class="b kick" id="kick">Chutar</button><button class="b kick" id="kickStrong">Forte</button>
+<div class="chip" id="ballMsg">Chegue perto da bola para chutar</div>
+<div id="rotateHint">Para jogar melhor, vire o celular na horizontal (tela deitada).</div>
+<div id="mainMenu">
+ <div class="menuBrand"><div class="brandName">BANGU CITY</div><div class="onlineTag"><i></i> ONLINE</div></div>
+ <div class="menuPanel" id="menuPanel">
+  <button class="menuBtn primary" id="playBtn">JOGAR</button>
+  <button class="menuBtn" id="charactersBtn">PERSONAGENS</button>
+  <button class="menuBtn" id="settingsBtn">CONFIGURAÇÕES</button>
+  <div class="menuSub" id="menuSub"></div>
+ </div>
+ <div class="menuFooter">PRAÇA LEALDINA MUNIZ • BANGU, RJ</div>
+</div>
+<div id="goalFlash"><div class="goalWord">GOOOOL!</div><div class="goalSub">BANGU CITY</div></div>
+<div id="scoreHud">GOLS <b id="scoreValue">0</b></div>
+<div id="onlineCount">ONLINE: 1</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+let gameStarted=false,goalBusy=false,goalCount=0,goalTimer=null;
+$('playBtn').addEventListener('click',()=>{gameStarted=true;$('mainMenu').style.display='none';$('scoreHud').style.display='block';$('onlineCount').style.display='block';$('hint').style.opacity=1;setTimeout(()=>$('hint').style.opacity=0,5000)});
+$('charactersBtn').addEventListener('click',()=>{
+ $('menuSub').classList.add('show');
+ $('menuSub').innerHTML=`<b>ESCOLHA SEU PERSONAGEM</b><br>
+  <button data-char="armando">ARMANDO</button>
+  <button data-char="geraldo">GERALDO</button>
+  <button data-char="carlos">CARLOS</button>`;
+});
+$('settingsBtn').addEventListener('click',()=>{$('menuSub').classList.add('show');$('menuSub').innerHTML='<b>CONFIGURAÇÕES</b><br><button id="qualityBtn">GRÁFICOS: ALTO</button><button id="backMenuBtn">VOLTAR</button>';});
+$('menuSub').addEventListener('click',e=>{
+ if(e.target.dataset.char){
+  const charId=e.target.dataset.char;
+  setCharacter(charId);
+  const label=charConfigs[charId].name.toUpperCase();
+  $('menuSub').innerHTML=`<b>${label} SELECIONADO!</b>`;
+ }
+ if(e.target.id==='qualityBtn'){e.target.textContent=e.target.textContent.includes('ALTO')?'GRÁFICOS: ECONÔMICO':'GRÁFICOS: ALTO';R.setPixelRatio(Math.min(devicePixelRatio,e.target.textContent.includes('ECONÔMICO')?1:1.65));}
+ if(e.target.id==='backMenuBtn'){$('menuSub').classList.remove('show');}
+});
+
+const R=new THREE.WebGLRenderer({antialias:true,powerPreference:"high-performance"});
+R.setPixelRatio(Math.min(devicePixelRatio,1.65));R.setSize(innerWidth,innerHeight);
+R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFSoftShadowMap;
+R.outputEncoding=THREE.sRGBEncoding;R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=0.82;
+document.body.appendChild(R.domElement);
+const S=new THREE.Scene();S.background=new THREE.Color(0x83b6d2);S.fog=new THREE.Fog(0x83b6d2,95,310);
+const C=new THREE.PerspectiveCamera(56,innerWidth/innerHeight,.1,500);
+S.add(new THREE.HemisphereLight(0xb9c9d8,0x35432d,.62));
+const ambient=new THREE.AmbientLight(0xffffff,.10);S.add(ambient);
+const sun=new THREE.DirectionalLight(0xffd39a,1.15);sun.position.set(-35,65,28);
+sun.castShadow=true;sun.shadow.mapSize.set(1536,1536);
+sun.shadow.camera.left=-115;sun.shadow.camera.right=115;sun.shadow.camera.top=115;sun.shadow.camera.bottom=-115;
+sun.shadow.camera.near=1;sun.shadow.camera.far=190;sun.shadow.bias=-.00025;
+S.add(sun);
+const M=c=>new THREE.MeshStandardMaterial({color:c,roughness:.94,metalness:0.0});
+const noiseCanvas=document.createElement('canvas');noiseCanvas.width=256;noiseCanvas.height=256;
+const ng=noiseCanvas.getContext('2d');const pixels=ng.createImageData(256,256);
+for(let i=0;i<pixels.data.length;i+=4){const v=105+Math.random()*48;pixels.data[i]=v;pixels.data[i+1]=v;pixels.data[i+2]=v;pixels.data[i+3]=22;}
+ng.putImageData(pixels,0,0);
+const grain=new THREE.CanvasTexture(noiseCanvas);grain.wrapS=grain.wrapT=THREE.RepeatWrapping;
+grain.repeat.set(3,3);grain.needsUpdate=true;
+
+let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+const y0=.12,solids=[];
+function box(x,z,w,d,h,c,solid,y=0){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),M(c));m.position.set(x,y+h/2,z);S.add(m);if(solid)solids.push({x,z,hx:w/2,hz:d/2});return m}
+const flat=(x,z,w,d,c,y)=>{const m=box(x,z,w,d,.02,c,false,y);m.material.map=grain;m.material.color.multiplyScalar(.92);m.material.needsUpdate=true;return m;};
+
+// chão, ruas, campo, quadra (escala 1 unidade = 1 m, norte = -z)
+box(0,0,600,600,.12,0x6fae4f,false,0);
+const road=(x,z,w,d,r)=>{const m=box(x,z,w,d,.02,0x5c5f63,false,y0);m.rotation.y=r||0};
+road(-35,0,6,260);road(25,33,150,6);road(47.5,-90,6,208,.297);
+flat(-25,0,2.5,56,0x8a857c,y0);flat(25,26.5,100,2.5,0x8a857c,y0);
+flat(38,3,60,35,0xd8c49a,y0);
+// Piso realista da quadra inspirado na foto: concreto/cimento queimado esverdeado com áreas avermelhadas, juntas, rachaduras e marcações brancas
+const courtTexCanvas=document.createElement('canvas');
+courtTexCanvas.width=1024;courtTexCanvas.height=1024;
+const ctg=courtTexCanvas.getContext('2d');
+
+// Base de cimento queimado esverdeado/acinzentado como na foto
+ctg.fillStyle='#6c7868';
+ctg.fillRect(0,0,1024,1024);
+
+// Manchas orgânicas de desgaste, sujeira e umidade no piso
+for(let i=0;i<160;i++){
+ const mx=Math.random()*1024, my=Math.random()*1024, mr=28+Math.random()*115;
+ const grad=ctg.createRadialGradient(mx,my,mr*0.1,mx,my,mr);
+ const dark=Math.random()>0.45;
+ grad.addColorStop(0, dark ? 'rgba(42,48,40,0.16)' : 'rgba(155,166,146,0.13)');
+ grad.addColorStop(1, 'rgba(108,120,104,0)');
+ ctg.fillStyle=grad;
+ ctg.beginPath();ctg.arc(mx,my,mr,0,Math.PI*2);ctg.fill();
+}
+
+// Áreas avermelhadas/terracota nas pontas da quadra (norte e sul)
+const redAreaH=Math.round(1024*(9/44));
+ctg.fillStyle='rgba(156,74,64,0.78)';
+ctg.fillRect(0,0,1024,redAreaH);
+ctg.fillRect(0,1024-redAreaH,1024,redAreaH);
+
+// Círculo/meia-lua avermelhada no centro e nas áreas como na foto
+ctg.save();
+ctg.fillStyle='rgba(150,72,63,0.52)';
+ctg.beginPath();ctg.arc(512,512,118,0,Math.PI*2);ctg.fill();
+ctg.restore();
+
+// Grão fino de concreto
+const cImg=ctg.getImageData(0,0,1024,1024);
+for(let i=0;i<cImg.data.length;i+=4){
+ const n=(Math.random()-0.5)*26;
+ cImg.data[i]=Math.max(0,Math.min(255,cImg.data[i]+n));
+ cImg.data[i+1]=Math.max(0,Math.min(255,cImg.data[i+1]+n));
+ cImg.data[i+2]=Math.max(0,Math.min(255,cImg.data[i+2]+n));
+}
+ctg.putImageData(cImg,0,0);
+
+// Linhas brancas da quadra (borda, meio de campo, círculo central e áreas)
+ctg.strokeStyle='rgba(244,246,242,0.82)';
+ctg.lineWidth=7;
+ctg.strokeRect(46,36,1024-92,1024-72);
+ctg.beginPath();
+ctg.moveTo(46,512);ctg.lineTo(1024-46,512);
+ctg.arc(512,512,118,0,Math.PI*2);
+ctg.stroke();
+// Áreas / garrafões
+ctg.strokeRect(250,36,524,175);
+ctg.strokeRect(250,1024-211,524,175);
+ctg.beginPath();
+ctg.arc(512,211,92,0,Math.PI);
+ctg.moveTo(512+92,1024-211);
+ctg.arc(512,1024-211,92,Math.PI,0);
+ctg.stroke();
+
+// Juntas de dilatação e rachaduras naturais do concreto
+ctg.strokeStyle='rgba(36,41,35,0.48)';
+ctg.lineWidth=2.5;
+for(let gx=170;gx<1024;gx+=170){
+ ctg.beginPath();ctg.moveTo(gx,0);ctg.lineTo(gx+((Math.random()-0.5)*10),1024);ctg.stroke();
+}
+for(let gy=170;gy<1024;gy+=170){
+ ctg.beginPath();ctg.moveTo(0,gy);ctg.lineTo(1024,gy+((Math.random()-0.5)*10));ctg.stroke();
+}
+// Rachadura diagonal marcante como no piso da foto
+ctg.strokeStyle='rgba(28,32,27,0.62)';
+ctg.lineWidth=3;
+ctg.beginPath();
+let crX=640,crY=1024;
+ctg.moveTo(crX,crY);
+for(let s=0;s<18;s++){
+ crX+=(Math.random()-0.56)*34;
+ crY-=48+Math.random()*14;
+ ctg.lineTo(crX,crY);
+}
+ctg.stroke();
+
+const courtTex=new THREE.CanvasTexture(courtTexCanvas);
+courtTex.anisotropy=8;
+courtTex.needsUpdate=true;
+const courtMat=new THREE.MeshStandardMaterial({map:courtTex,roughness:.78,metalness:.04});
+const courtFloor=new THREE.Mesh(new THREE.BoxGeometry(26,.04,44),courtMat);
+courtFloor.position.set(-9,y0+.02,-1.5);
+courtFloor.receiveShadow=true;
+S.add(courtFloor);
+
+function fence(cx,cz,w,d,g=4,n=0){const seg=(x,z,ww,dd)=>{const m=box(x,z,ww,dd,3.4,0x7c8782,true,y0);m.material.transparent=true;m.material.opacity=.55};
+ const gs=z=>{seg(cx-(w/4+g/4),z,w/2-g/2,.15);seg(cx+(w/4+g/4),z,w/2-g/2,.15)};n?gs(cz-d/2):seg(cx,cz-d/2,w,.15);seg(cx-w/2,cz,.15,d);seg(cx+w/2,cz,.15,d);
+ gs(cz+d/2)}
+(()=>{const seg=(x,z,ww,dd)=>{const m=box(x,z,ww,dd,3.4,0x7c8782,true,y0);m.material.transparent=true;m.material.opacity=.55};seg(-9,-24.5,28,.15);seg(-9,21.5,28,.15);seg(-23,-1.5,.15,26);seg(5,-1.5,.15,26)})();fence(38,3,62,37);
+
+function goal(x,z){[-3.6,3.6].forEach(o=>box(x,z+o,.12,.12,4.4,0xffffff,false,y0));box(x,z,.12,7.4,.12,0xffffff,false,y0+4.2)}
+function goalZ(x,z){
+ const mat=M(0xf4f4f0);
+ const post=(px,py,pz,h)=>{const m=new THREE.Mesh(new THREE.CylinderGeometry(.11,.11,h,16),mat);m.position.set(px,py,pz);m.castShadow=true;S.add(m)};
+ const cross=(px,py,pz,w)=>{const m=new THREE.Mesh(new THREE.CylinderGeometry(.11,.11,w,16),mat);m.rotation.z=Math.PI/2;m.position.set(px,py,pz);m.castShadow=true;S.add(m)};
+ post(x-4.1,y0+2.5,z,5);post(x+4.1,y0+2.5,z,5);cross(x,y0+5,z,8.4);
+ // Rede estendida até a grade do fundo da quadra
+ const depth=1.6;
+ const net=new THREE.Mesh(new THREE.BoxGeometry(8.2,4.9,depth),new THREE.MeshBasicMaterial({color:0xe8eee9,wireframe:true,transparent:true,opacity:.32}));
+ net.position.set(x,y0+2.45,z+(z<0?-depth/2:depth/2));
+ S.add(net);
+}
+goal(8.8,3);goal(67.2,3);goalZ(-9,-22.8);goalZ(-9,19.8);
+
+// árvores
+function tree(x,z,s=1){const t=new THREE.Mesh(new THREE.CylinderGeometry(.25*s,.35*s,3*s,9),M(0x60432f));t.position.set(x,y0+1.5*s,z);t.castShadow=true;t.receiveShadow=true;S.add(t);
+ const foliage=rnd()>.5?0x286b36:0x397d3d;
+ const f=new THREE.Mesh(new THREE.IcosahedronGeometry(2.3*s,1),M(foliage));f.scale.y=.9;f.position.set(x,y0+4.2*s,z);f.castShadow=true;f.receiveShadow=true;S.add(f);
+ for(let k=0;k<3;k++){const cl=new THREE.Mesh(new THREE.IcosahedronGeometry(.95*s,1),M(foliage));cl.position.set(x+(rnd()-.5)*2*s,y0+(3.7+rnd()*1.6)*s,z+(rnd()-.5)*2*s);cl.castShadow=true;S.add(cl)}solids.push({x,z,hx:.5,hz:.5})}
+const zones=[[-9,-1.5,32,52],[38,3,66,42],[-25,0,5,58],[25,26.5,102,5],[38,-19,66,5],[62,-30,14,30],[-29,-3,5,14],[-28,14,6,5],[-28,9,5,6],[6,29,12,5],[72,5,7,40]];
+for(let i=0,n=0;i<800&&n<38;i++){const x=rnd()*98-32,z=rnd()*58-30;
+ if(zones.some(([a,b,w,d])=>Math.abs(x-a)<w/2&&Math.abs(z-b)<d/2))continue;tree(x,z,.9+rnd()*.5);n++}
+[-20,0,20,40,60,80].forEach(x=>tree(x,41+rnd()*4,1));
+for(let x=-12;x<=100;x+=7){const b=new THREE.Mesh(new THREE.IcosahedronGeometry(2,0),M(0x2f6f3a));const bz=53+Math.sin(x*.3)*2;b.position.set(x,y0+1,bz);S.add(b);solids.push({x,z:bz,hx:1.2,hz:1.2})}
+
+// mesas, academia, quiosque, placa
+[[-28,8],[-28,10.5],[14,-19],[30,-19],[46,-19],[62,-19]].forEach(([x,z])=>{box(x,z,2.2,.9,.12,0x8a6a45,false,y0+.8);box(x,z,2,.5,.8,0x8a6a45,true,y0);box(x,z-.9,2.2,.3,.1,0x8a6a45,false,y0+.45);box(x,z+.9,2.2,.3,.1,0x8a6a45,false,y0+.45)});
+[[-29,-8],[-29,-3],[-29,2]].forEach(([x,z])=>{box(x,z-.5,.12,.12,1.6,0x4cc04a,false,y0);box(x,z+.5,.12,.12,1.6,0x4cc04a,false,y0);box(x,z,.12,1.2,.12,0x4cc04a,false,y0+1.5);solids.push({x,z,hx:.3,hz:.7})});
+box(-28,14,3.2,2.4,2.6,0xc43a30,true,y0);box(-28,14,3.6,2.8,.15,0x7b2b25,false,y0+2.6);box(-28,15.25,1.6,.05,1.8,0x2f5a3f,false,y0);
+box(-30.5,16.5,.1,.1,2.6,0x888888,false,y0);const ds=box(-30.5,16.5,.9,.05,.9,0xf2c200,false,y0+2.1);ds.rotation.z=Math.PI/4;
+tree(-31,7,1.5);tree(-31,23,1.4);
+[[-23,-24.5],[5,-24.5],[-23,21.5],[5,21.5],[7,-15.5],[69,-15.5],[69,21.5]].forEach(([x,z])=>box(x,z,.25,.25,9,0x777c80,false,y0));
+const cv=document.createElement('canvas');cv.width=512;cv.height=128;const g=cv.getContext('2d');g.fillStyle='#14301f';g.fillRect(0,0,512,128);g.fillStyle='#fff';g.font='bold 46px sans-serif';g.textAlign='center';g.fillText('Praça Lealdina Muniz',256,80);
+const sg=new THREE.Mesh(new THREE.PlaneGeometry(8,2),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(cv)}));sg.position.set(6,3.3,29);S.add(sg);
+[2.2,9.8].forEach(x=>box(x,29,.2,.2,3.4,0x333333,true,.08));
+
+// escola (prédio de laje ao norte da praça)
+box(3,-43,86,20,7,0xdedad2,true,0);box(3,-43,87,21,.4,0x9aa09c,false,7);
+
+// casas
+const wall=[0xe8d9b8,0xd9a79a,0xb8c9d6,0xf0e3c0,0xc9b79c,0x9fb8a0,0xe6c4a0],roof=[0xb5532f,0xc0613a,0x8a8f94];
+function house(x,z){const w=6+rnd()*3,d=6+rnd()*3,h=3.5+rnd()*3,rh=1.4+rnd();
+ box(x,z,w,d,h,wall[rnd()*7|0],true,0);
+ const r=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),M(roof[rnd()*3|0]));r.scale.set(w*.78,rh,d*.78);r.rotation.y=Math.PI/4;r.position.set(x,h+rh/2,z);S.add(r)}
+for(let x=-90;x<=40;x+=9){house(x,-68);house(x,-80)}
+for(let z=-30;z<=60;z+=9){house(-46,z);house(-57,z)}
+for(let x=-60;x<=130;x+=9)house(x,64);
+for(let s=-90;s<=100;s+=9)house(47.5+.293*s+8.6,-90+.956*s-2.6);
+
+// carros
+function car(x,z,c){box(x,z,1.8,4.2,.9,c,true,.3);box(x,z,1.6,2.2,.7,0x222a30,false,1.2)}
+car(-35,12,0xc7ccd1);car(-36,-18,0xeeeeee);car(-34,45,0x8f2d2d);
+
+// lado leste do campo
+flat(71.3,3,4,38,0x7d6d55,y0);
+[[71.5,0],[71.5,8]].forEach(([x,z])=>{box(x,z,.9,2.2,.12,0x8a6a45,false,y0+.8);box(x,z,.5,2,.8,0x8a6a45,true,y0);box(x-.9,z,.3,2.2,.1,0x8a6a45,false,y0+.45);box(x+.9,z,.3,2.2,.1,0x8a6a45,false,y0+.45)});
+tree(71.5,-10,1.2);tree(71.5,16,1.2);tree(71.5,-4,1.1);
+function carR(x,z,c,r){const a=box(x,z,1.8,4.2,.9,c,true,.3),b=box(x,z,1.6,2.2,.7,0x222a30,false,1.2);a.rotation.y=b.rotation.y=r}
+carR(72.7,-3,0xd5d9dd,.297);carR(70.4,-12,0x8a8f94,.297);
+
+// serra ao fundo
+[[-140,-190,60,95,0x
