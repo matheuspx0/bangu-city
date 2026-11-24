@@ -819,7 +819,7 @@ function upsertRemotePlayer(p){
  entry.tx=p.x;entry.ty=p.y;entry.tz=p.z;entry.try=p.ry;
  entry.moving=Boolean(p.moving);entry.running=Boolean(p.running);
 }
-
+{ x: ... y: ... z: ... })
 function connectMultiplayer(){
  if(!location.host) return;
  const proto=location.protocol==='https:'?'wss:':'ws:';
