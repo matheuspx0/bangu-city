@@ -1,0 +1,36 @@
+========================================================
+BANGU CITY ONLINE - MULTIPLAYER EM TEMPO REAL (VPS)
+========================================================
+
+Este pacote transforma o 3º protótipo (com Armando, Geraldo e Carlos)
+em um jogo multiplayer online para você e seus amigos jogarem juntos
+na mesma quadra em tempo real!
+
+COMO RODAR NA SUA VPS (Ubuntu/Debian):
+
+1. Envie esta pasta para a VPS (ex.: /var/www/bangu-city)
+2. Instale o Node.js (caso ainda não tenha):
+   curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+   sudo apt-get install -y nodejs
+
+3. Entre na pasta e instale as dependências:
+   cd /var/www/bangu-city
+   npm install
+
+4. Inicie o servidor:
+   npm start
+   (Ou use PM2 para manter rodando 24h:
+    sudo npm install -g pm2
+    pm2 start server.js --name bangu-city)
+
+5. Libere a porta 3000 no firewall da VPS:
+   sudo ufw allow 3000
+
+6. Compartilhe o link com seus amigos:
+   http://IP_DA_SUA_VPS:3000
+
+O que está sincronizado em tempo real:
+- Personagem escolhido de cada amigo (Armando, Geraldo ou Carlos) com nome flutuante
+- Posição, rotação e animação de corrida/caminhada de todos os jogadores
+- Bola compartilhada (quem chutar ou encostar atualiza para todos na hora)
+- Placar de gols compartilhado + contador de jogadores online na sala
