@@ -910,7 +910,7 @@ function loop(now){
  if(jump&&ground){vy=7.5;ground=false}jump=false;
  vy-=20*dt;py+=vy*dt;if(py<=y0){py=y0;vy=0;ground=true}
  P.position.set(px,py,pz);
-
+set(jogadorRef, { x: px, y: py, z: pz });
  if(autoCamera && L < .1){
   let target=P.rotation.y+Math.PI;
   let delta=((target-cy+Math.PI*3)%(Math.PI*2))-Math.PI;
